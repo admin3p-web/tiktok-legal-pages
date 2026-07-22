@@ -135,24 +135,67 @@
         <a href="terms.html" target="_blank">Terms of Service</a>
     </div>
 
-    <script>
-        function showOAuth() {
-            document.getElementById('landing-page').classList.add('hidden');
-            document.getElementById('oauth-screen').classList.remove('hidden');
+   <script>
+    // Open the simulation in a real browser popup window
+    function showOAuth() {
+        // Creates a clean, centered popup window box
+        const width = 500;
+        const height = 650;
+        const left = (window.screen.width / 2) - (width / 2);
+        const top = (window.screen.height / 2) - (height / 2);
+        
+        // Open a blank popup window
+        const popup = window.open("", "TikTokOAuthPopup", `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`);
+        
+        // Extract Section 2 (the OAuth Box HTML) and inject it into the new window
+        const oauthHTML = document.getElementById('oauth-screen').innerHTML;
+        const baseStyles = document.getElementsByTagName('head')[0].innerHTML;
+        
+        popup.document.write(`
+            <html>
+            <head>
+                ${baseStyles}
+                <style>
+                    body { background: #555; padding: 10px; }
+                    .oauth-box { margin: 20px auto; display: block !important; }
+                </style>
+            </head>
+            <body>
+                ${oauthHTML}
+                <script>
+                    // Pass the success signal back to the main master window
+                    function loginSuccess() {
+                        window.opener.loginSuccess();
+                        window.close();
+                    }
+                <\/script>
+            </body>
+            </html>
+        `);
+        popup.document.close();
+    }
+
+    // This runs in the MAIN window when the popup sends the success signal
+    function loginSuccess() {
+        document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('app-dashboard').classList.remove('hidden');
+    }
+
+    function logout() {
+        document.getElementById('app-dashboard').classList.add('hidden');
+        document.getElementById('landing-page').classList.remove('hidden');
+    }
+
+    function triggerPost(mode) {
+        const el = document.getElementById('status-message');
+        el.classList.remove('hidden');
+        if(mode === 'draft') {
+            el.style.background = '#007bff';
+            el.innerText = '🚀 Success! Media pipeline uploaded package to your TikTok app App Drafts successfully via [video.upload] scope.';
+        } else {
+            el.style.background = '#28a745';
+            el.innerText = '🎉 Success! Production engine pushed asset directly live to user feed via [video.publish] scope.';
         }
-        function loginSuccess() {
-            document.getElementById('oauth-screen').classList.add('hidden');
-            document.getElementById('app-dashboard').classList.remove('hidden');
-        }
-        function logout() {
-            document.getElementById('app-dashboard').classList.add('hidden');
-            document.getElementById('landing-page').classList.remove('hidden');
-        }
-        function triggerPost(mode) {
-            const el = document.getElementById('status-message');
-            el.classList.remove('hidden');
-            if(mode === 'draft') {
-                el.style.background = '#007bff';
-                el.innerText = '🚀 Success! Media pipeline uploaded package to your TikTok app App Drafts successfully via [video.upload] scope.';
-            } else {
-                el.style.background = '#28a745';
+        setTimeout(() => { el.classList.add('hidden'); }, 5000);
+    }
+</script>
