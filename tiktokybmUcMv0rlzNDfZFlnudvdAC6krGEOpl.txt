@@ -1,1 +1,3 @@
-tiktok-developers-site-verification=ybmUcMv0rlzNDfZFlnudvdAC6krGEOpl
+---
+permalink: /tiktok-developers-site-verification=ybmUcMv0rlzNDfZFlnudvdAC6krGEOpl
+---
